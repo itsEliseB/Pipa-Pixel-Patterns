@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "concurrently \"vite\" \"npm run scss:watch\"",
+    "build": "npm run scss:build && vite build",
+    "preview": "vite preview",
+    "scss:watch": "sass --watch src/assets/scss:src/assets/css --no-source-map",
+    "scss:build": "sass src/assets/scss:src/assets/css --no-source-map"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -18,6 +20,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.2.1",
+    "sass": "^1.97.3",
     "vite": "^6.0.5"
   }
 }

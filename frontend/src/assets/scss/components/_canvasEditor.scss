@@ -1,0 +1,21 @@
+.canvas-editor {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #eee;
+  overflow: auto;
+}
+
+.canvas-area-inner {
+  max-width: 100%;
+  max-height: 100%;
+}

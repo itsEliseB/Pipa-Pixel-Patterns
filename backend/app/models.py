@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -24,5 +24,9 @@ class Design(Base):
     description = Column(String, default="")
     created_at = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    pattern_type = Column(String, nullable=False, default="pixel_art")
+    width = Column(Integer, nullable=False, default=32)
+    height = Column(Integer, nullable=False, default=32)
+    canvas_data = Column(Text, nullable=True)
 
     owner = relationship("User", back_populates="designs")

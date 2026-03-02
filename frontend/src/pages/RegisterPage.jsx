@@ -21,11 +21,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "100px auto", padding: 20 }}>
+    <div className="auth-page">
       <h1>Register</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="auth-error">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 12 }}>
+        <div className="form-group">
           <label htmlFor="username">Username</label>
           <br />
           <input
@@ -34,10 +34,10 @@ export default function RegisterPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ width: "100%", padding: 8 }}
+            className="form-input"
           />
         </div>
-        <div style={{ marginBottom: 12 }}>
+        <div className="form-group">
           <label htmlFor="password">Password</label>
           <br />
           <input
@@ -46,14 +46,14 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: 8 }}
+            className="form-input"
           />
         </div>
-        <button type="submit" style={{ padding: "8px 24px" }}>
+        <button type="submit" className="auth-submit">
           Register
         </button>
       </form>
-      <p style={{ marginTop: 16 }}>
+      <p className="auth-footer">
         Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>

@@ -16,11 +16,11 @@ export default function DesignsPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 800, margin: "40px auto", padding: 20 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="designs-page">
+      <div className="designs-header">
         <h1>My Designs</h1>
         <div>
-          <Link to="/designs/new" style={{ marginRight: 16 }}>
+          <Link to="/designs/new" className="new-design-link">
             + New Design
           </Link>
           <button onClick={logout}>Logout</button>
@@ -32,20 +32,12 @@ export default function DesignsPage() {
       ) : designs.length === 0 ? (
         <p>No designs yet. Create your first one!</p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <ul className="designs-list">
           {designs.map((design) => (
-            <li
-              key={design.id}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 12,
-              }}
-            >
-              <h3 style={{ margin: "0 0 8px" }}>{design.title}</h3>
-              {design.description && <p style={{ margin: "0 0 8px" }}>{design.description}</p>}
-              <small style={{ color: "#666" }}>
+            <li key={design.id} className="design-card">
+              <h3 className="design-card-title">{design.title}</h3>
+              {design.description && <p className="design-card-description">{design.description}</p>}
+              <small className="design-card-date">
                 Created: {new Date(design.created_at).toLocaleDateString()}
               </small>
             </li>

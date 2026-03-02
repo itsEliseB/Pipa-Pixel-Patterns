@@ -1,0 +1,17 @@
+.pixel-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: default;
+
+  &[data-tool="eyedropper"] {
+    cursor: crosshair;
+  }
+
+  &[data-tool="eraser"] {
+    cursor: cell;
+  }
+}

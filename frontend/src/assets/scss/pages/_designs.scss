@@ -1,0 +1,39 @@
+.designs-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.designs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-design-link {
+  margin-right: 16px;
+}
+
+.designs-list {
+  list-style: none;
+  padding: 0;
+}
+
+.design-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.design-card-title {
+  margin: 0 0 8px;
+}
+
+.design-card-description {
+  margin: 0 0 8px;
+}
+
+.design-card-date {
+  color: #666;
+}

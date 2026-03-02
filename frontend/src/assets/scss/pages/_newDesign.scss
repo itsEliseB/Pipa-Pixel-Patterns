@@ -1,0 +1,107 @@
+.new-design-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #fff;
+}
+
+.design-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+  flex-wrap: wrap;
+}
+
+.design-title-input {
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  min-width: 180px;
+  font-family: inherit;
+}
+
+.pattern-type-group {
+  display: flex;
+  gap: 4px;
+}
+
+.pattern-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 400;
+  font-family: inherit;
+
+  &.active {
+    border-color: #333;
+    background: #333;
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+.size-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.size-label {
+  font-size: 13px;
+  color: #555;
+}
+
+.size-select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-text {
+  color: red;
+  font-size: 13px;
+}
+
+.btn-cancel {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-save {
+  padding: 6px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #333;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,12 @@
+// Main stylesheet — import partials here
+@use 'components/colorPalette';
+@use 'components/canvasEditor';
+@use 'components/toolbar';
+@use 'components/pixelCanvas';
+@use 'pages/auth';
+@use 'pages/designs';
+@use 'pages/newDesign';
+
+* {
+  font-family: 'Inter', sans-serif;
+}

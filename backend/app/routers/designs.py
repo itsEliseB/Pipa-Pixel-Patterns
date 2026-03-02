@@ -27,6 +27,10 @@ def create_design(
         title=design_data.title,
         description=design_data.description,
         user_id=current_user.id,
+        pattern_type=design_data.pattern_type,
+        width=design_data.width,
+        height=design_data.height,
+        canvas_data=design_data.canvas_data,
     )
     db.add(design)
     db.commit()
