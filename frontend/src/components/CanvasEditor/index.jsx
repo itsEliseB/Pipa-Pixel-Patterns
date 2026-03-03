@@ -15,8 +15,8 @@ function getDefaultColor(patternType) {
   return typeof first === "string" ? first : first.hex;
 }
 
-export default function CanvasEditor({ patternType, width, height, onDataChange }) {
-  const [pixels, setPixels] = useState(() => makeEmptyPixels(width, height));
+export default function CanvasEditor({ patternType, width, height, onDataChange, initialPixels }) {
+  const [pixels, setPixels] = useState(() => initialPixels || makeEmptyPixels(width, height));
   const [activeTool, setActiveTool] = useState("pencil");
   const [currentColor, setCurrentColor] = useState(() => getDefaultColor(patternType));
 

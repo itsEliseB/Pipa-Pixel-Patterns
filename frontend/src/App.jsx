@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DesignsPage from "./pages/DesignsPage";
 import NewDesignPage from "./pages/NewDesignPage";
+import EditDesignPage from "./pages/EditDesignPage";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,14 @@ function App() {
         element={
           <ProtectedRoute>
             <NewDesignPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/designs/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditDesignPage />
           </ProtectedRoute>
         }
       />

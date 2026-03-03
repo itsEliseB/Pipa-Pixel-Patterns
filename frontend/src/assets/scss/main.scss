@@ -3,9 +3,11 @@
 @use 'components/canvasEditor';
 @use 'components/toolbar';
 @use 'components/pixelCanvas';
+@use 'components/designPreview';
 @use 'pages/auth';
 @use 'pages/designs';
 @use 'pages/newDesign';
+@use 'pages/editDesign';
 
 * {
   font-family: 'Inter', sans-serif;

@@ -30,6 +30,16 @@ class DesignCreate(BaseModel):
     canvas_data: str | None = None
 
 
+class DesignRename(BaseModel):
+    title: str
+
+
+class DesignUpdate(BaseModel):
+    title: str
+    description: str = ""
+    canvas_data: str | None = None
+
+
 class DesignResponse(BaseModel):
     id: int
     title: str
