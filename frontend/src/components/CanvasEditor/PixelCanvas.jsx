@@ -1,17 +1,19 @@
 import { useRef, useEffect, useCallback } from "react";
+import { isStitchTool } from "../../data/tools";
 
 const GRID_COLOR = "#cccccc";
 const EMPTY_COLOR = "#f8f8f8";
+const getColor = cell => cell?.color ?? cell ?? null;
 
 function floodFill(pixels, width, height, startIdx, targetColor, fillColor) {
-  if (targetColor === fillColor) return pixels;
+  if (getColor(targetColor) === getColor(fillColor)) return pixels;
   const next = [...pixels];
   const queue = [startIdx];
   const visited = new Set();
   while (queue.length > 0) {
     const idx = queue.shift();
     if (visited.has(idx)) continue;
-    if (next[idx] !== targetColor) continue;
+    if (getColor(next[idx]) !== targetColor) continue;
     visited.add(idx);
     next[idx] = fillColor;
     const row = Math.floor(idx / width);
@@ -28,7 +30,7 @@ function drawCell(ctx, col, row, color, cellSize, patternType) {
   const x = col * cellSize;
   const y = row * cellSize;
 
-  if (patternType === "iron_bead_hama" || patternType === "iron_bead_perler") {
+  if (patternType === "iron_bead") {
     // Pegboard background
     ctx.fillStyle = "#e0e0e0";
     ctx.fillRect(x, y, cellSize, cellSize);
@@ -50,20 +52,7 @@ function drawCell(ctx, col, row, color, cellSize, patternType) {
       ctx.fill();
     }
   } else if (patternType === "cross_stitch") {
-    ctx.fillStyle = color || EMPTY_COLOR;
-    ctx.fillRect(x, y, cellSize, cellSize);
-    if (color) {
-      // Draw X
-      const pad = cellSize * 0.15;
-      ctx.strokeStyle = "rgba(0,0,0,0.45)";
-      ctx.lineWidth = Math.max(1, cellSize * 0.1);
-      ctx.beginPath();
-      ctx.moveTo(x + pad, y + pad);
-      ctx.lineTo(x + cellSize - pad, y + cellSize - pad);
-      ctx.moveTo(x + cellSize - pad, y + pad);
-      ctx.lineTo(x + pad, y + cellSize - pad);
-      ctx.stroke();
-    }
+    drawCrossStitchCell(ctx, x, y, color, cellSize);
   } else {
     // Pixel art
     ctx.fillStyle = color || EMPTY_COLOR;
@@ -72,19 +61,18 @@ function drawCell(ctx, col, row, color, cellSize, patternType) {
 }
 
 function drawCrossStitchCell(ctx, x, y, cell, cellSize) {
+  ctx.fillStyle = EMPTY_COLOR;
+  ctx.fillRect(x, y, cellSize, cellSize);
 
-    ctx.fillStyle = EMPTY_COLOR;
-    ctx.fillRect(x, y, cellSize, cellSize)
+  if (!cell) return;
 
-    if (!cell) return;
+  const { type, color } = cell;
 
-    const { type, color } = cell;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1.5, cellSize * 0.12);
+  ctx.lineCap = "round";
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = Math.max(1.5, cellSize * 0.12);
-    ctx.lineCap = "round";
-
-      const pad = cellSize * 0.12;
+  const pad = cellSize * 0.12;
   const cx = x + cellSize / 2;
   const cy = y + cellSize / 2;
   const tl = [x + pad,            y + pad           ];
@@ -100,13 +88,13 @@ function drawCrossStitchCell(ctx, x, y, cell, cellSize) {
   };
 
   switch (type) {
-    case "stitch_full":       line(tl, br); line(tr, bl); break;
-    case "stitch_half_tl_br": line(tl, br); break;
-    case "stitch_half_bl_tr": line(bl, tr); break;
-    case "stitch_q_tl":       line(tl, [cx, cy]); break;
-    case "stitch_q_tr":       line(tr, [cx, cy]); break;
-    case "stitch_q_bl":       line(bl, [cx, cy]); break;
-    case "stitch_q_br":       line(br, [cx, cy]); break;
+    case "stitch_full":       line(tl, br); line(tr, bl);      break;
+    case "stitch_half_tl_br": line(tl, br);                    break;
+    case "stitch_half_bl_tr": line(bl, tr);                    break;
+    case "stitch_q_tl":       line(tl, [cx, cy]);              break;
+    case "stitch_q_tr":       line(tr, [cx, cy]);              break;
+    case "stitch_q_bl":       line(bl, [cx, cy]);              break;
+    case "stitch_q_br":       line(br, [cx, cy]);              break;
     case "stitch_3q_tl":      line(tl, br); line(tr, [cx, cy]); break;
     case "stitch_3q_tr":      line(bl, tr); line(tl, [cx, cy]); break;
     case "stitch_3q_bl":      line(bl, tr); line(br, [cx, cy]); break;
@@ -123,9 +111,12 @@ export default function PixelCanvas({
   currentColor,
   onPixelsChange,
   onEyedropper,
+  scrollContainerRef,
 }) {
   const canvasRef = useRef(null);
   const isDrawing = useRef(false);
+  const isPanning = useRef(false);
+  const lastPan = useRef({ x: 0, y: 0 });
 
   const getCellSize = useCallback(() => {
     const canvas = canvasRef.current;
@@ -147,7 +138,7 @@ export default function PixelCanvas({
       if (col < 0 || col >= width || row < 0 || row >= height) return null;
       return { col, row, idx: row * width + col };
     },
-    [width, height, getCellSize]
+    [width, height, getCellSize],
   );
 
   const applyTool = useCallback(
@@ -155,21 +146,28 @@ export default function PixelCanvas({
       const cell = getCell(e);
       if (!cell) return;
       const { idx } = cell;
+      const next = [...pixels];
+
+      if (isStitchTool(activeTool)) {
+        next[idx] = {type : activeTool, color: currentColor};
+        onPixelsChange(next); return;
+      }
 
       if (activeTool === "eyedropper") {
-        const color = pixels[idx] || null;
-        onEyedropper(color);
+        const cell = pixels[idx];
+        const color = cell?.color ?? cell ?? null;
+        const stitchType = cell?.type ?? null
+        onEyedropper(color, stitchType);
         return;
       }
 
       if (activeTool === "fill") {
-        const targetColor = pixels[idx] || null;
-        const next = floodFill(pixels, width, height, idx, targetColor, currentColor);
-        onPixelsChange(next);
+          const targetColor = getColor(pixels[idx]);
+          const fillValue = patternType === "cross_stitch" ? { type: "stitch_full", color: currentColor } : currentColor;                                         
+          onPixelsChange(floodFill(pixels, width, height, idx, targetColor, fillValue))  
         return;
       }
 
-      const next = [...pixels];
       if (activeTool === "pencil") {
         next[idx] = currentColor;
       } else if (activeTool === "eraser") {
@@ -177,7 +175,7 @@ export default function PixelCanvas({
       }
       onPixelsChange(next);
     },
-    [activeTool, currentColor, pixels, width, height, getCell, onPixelsChange, onEyedropper]
+    [activeTool, currentColor, pixels, width, height, patternType, getCell, onPixelsChange, onEyedropper],
   );
 
   // Render canvas
@@ -191,12 +189,12 @@ export default function PixelCanvas({
 
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
-        drawCell(ctx, col, row, pixels[row * width + col] || null, cellSize, patternType);
+        drawCell(ctx, col, row, pixels[row * width + col] ?? null, cellSize, patternType);
       }
     }
 
     // Grid lines (skip for iron bead — pegboard gaps are implicit)
-    if (patternType !== "iron_bead_hama" && patternType !== "iron_bead_perler") {
+    if (patternType !== "iron_bead") {
       ctx.strokeStyle = GRID_COLOR;
       ctx.lineWidth = 0.5;
       for (let col = 0; col <= width; col++) {
@@ -215,15 +213,29 @@ export default function PixelCanvas({
   }, [pixels, width, height, patternType, getCellSize]);
 
   const handleMouseDown = (e) => {
+    if (activeTool === "pan") {
+      isPanning.current = true;
+      lastPan.current = { x: e.clientX, y: e.clientY };
+      return;
+    }
     isDrawing.current = true;
     applyTool(e);
   };
   const handleMouseMove = (e) => {
+    if (activeTool === "pan" && isPanning.current) {
+      const container = scrollContainerRef?.current;
+      if (container) {
+        container.scrollLeft -= e.clientX - lastPan.current.x;
+        container.scrollTop  -= e.clientY - lastPan.current.y;
+      }
+      lastPan.current = { x: e.clientX, y: e.clientY };
+      return;
+    }
     if (!isDrawing.current) return;
-    if (activeTool === "pencil" || activeTool === "eraser") applyTool(e);
+    if (activeTool === "pencil" || activeTool === "eraser" || isStitchTool(activeTool)) applyTool(e);
   };
-  const handleMouseUp = () => { isDrawing.current = false; };
-  const handleMouseLeave = () => { isDrawing.current = false; };
+  const handleMouseUp = () => { isDrawing.current = false; isPanning.current = false; };
+  const handleMouseLeave = () => { isDrawing.current = false; isPanning.current = false; };
 
   const canvasPx = Math.min(600, width * 20);
 

@@ -7,7 +7,7 @@ function drawCell(ctx, col, row, color, cellSize, patternType) {
   const x = col * cellSize;
   const y = row * cellSize;
 
-  if (patternType === "iron_bead_hama" || patternType === "iron_bead_perler") {
+  if (patternType === "iron_bead") {
     ctx.fillStyle = "#e0e0e0";
     ctx.fillRect(x, y, cellSize, cellSize);
     if (color) {
