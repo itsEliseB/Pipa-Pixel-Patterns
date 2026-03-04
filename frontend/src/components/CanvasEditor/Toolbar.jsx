@@ -1,23 +1,20 @@
-const TOOLS = [
-  { id: "pencil", label: "Pencil", icon: "✏️" },
-  { id: "eraser", label: "Eraser", icon: "🧹" },
-  { id: "fill", label: "Fill", icon: "🪣" },
-  { id: "eyedropper", label: "Eyedropper", icon: "💉" },
-];
+import {ALL_TOOLS, TOOLS_BY_TYPE, isStitchTool} from "../../data/tools"
+import {TOOL_ICONS} from "./ToolIcons"
 
 export default function Toolbar({ activeTool, onToolChange, currentColor, onColorChange, patternType }) {
   const isPixelArt = patternType === "pixel_art";
+  const visibleTools = TOOLS_BY_TYPE[patternType].map(id => ALL_TOOLS.find(tool => tool.id === id))
 
   return (
     <div className="toolbar">
-      {TOOLS.map((tool) => (
+      {visibleTools.map((tool) => (
         <button
           key={tool.id}
           title={tool.label}
           onClick={() => onToolChange(tool.id)}
           className={`tool-btn${activeTool === tool.id ? " active" : ""}`}
         >
-          {tool.icon}
+           {(() => { const Icon = TOOL_ICONS[tool.id]; return <Icon />; })()}  
         </button>
       ))}
 
