@@ -1,5 +1,7 @@
-import { useState, useCallback } from "react";
-import { CANVAS_SIZES, PALETTE_MAP } from "../../data/palettes";
+import { useState, useRef, useMemo, useCallback } from "react";
+import { PALETTE_MAP } from "../../data/palettes";
+import { DEFAULT_TOOL } from "../../data/tools";
+import { getColor } from "../../utils/drawCell";
 import PixelCanvas from "./PixelCanvas";
 import Toolbar from "./Toolbar";
 import ColorPalette from "./ColorPalette";
@@ -9,7 +11,7 @@ function makeEmptyPixels(width, height) {
 }
 
 function getDefaultColor(patternType) {
-  const palette = PALETTE_MAP[patternType];
+  const palette = PALETTE_MAP[patternType] ?? PALETTE_MAP["iron_bead_hama"];
   if (!palette || palette.length === 0) return "#000000";
   const first = palette[0];
   return typeof first === "string" ? first : first.hex;
@@ -17,10 +19,19 @@ function getDefaultColor(patternType) {
 
 export default function CanvasEditor({ patternType, width, height, onDataChange, initialPixels }) {
   const [pixels, setPixels] = useState(() => initialPixels || makeEmptyPixels(width, height));
-  const [activeTool, setActiveTool] = useState("pencil");
+  const [activeTool, setActiveTool] = useState(DEFAULT_TOOL[patternType]);
   const [currentColor, setCurrentColor] = useState(() => getDefaultColor(patternType));
+  const scrollContainerRef = useRef(null);
 
-  // When parent changes patternType/size, reset (parent triggers re-mount via key)
+  const usedColors = useMemo(() => {
+    const seen = new Set();
+    pixels.forEach(cell => {
+      const color = getColor(cell);
+      if (color) seen.add(color);
+    });
+    return [...seen];
+  }, [pixels]);
+
   const handlePixelsChange = useCallback(
     (next) => {
       setPixels(next);
@@ -29,10 +40,10 @@ export default function CanvasEditor({ patternType, width, height, onDataChange,
     [onDataChange]
   );
 
-  const handleEyedropper = useCallback((color) => {
+  const handleEyedropper = useCallback((color, stitchType) => {
     if (color) setCurrentColor(color);
-    setActiveTool("pencil");
-  }, []);
+    setActiveTool(stitchType ?? DEFAULT_TOOL[patternType]);
+  }, [patternType]);
 
   const handleColorChange = useCallback((color) => {
     setCurrentColor(color);
@@ -46,9 +57,10 @@ export default function CanvasEditor({ patternType, width, height, onDataChange,
         currentColor={currentColor}
         onColorChange={handleColorChange}
         patternType={patternType}
+        usedColors={usedColors}
       />
 
-      <div className="canvas-area">
+      <div className="canvas-area" ref={scrollContainerRef}>
         <div className="canvas-area-inner">
           <PixelCanvas
             pixels={pixels}
@@ -59,6 +71,7 @@ export default function CanvasEditor({ patternType, width, height, onDataChange,
             currentColor={currentColor}
             onPixelsChange={handlePixelsChange}
             onEyedropper={handleEyedropper}
+            scrollContainerRef={scrollContainerRef}
           />
         </div>
       </div>
