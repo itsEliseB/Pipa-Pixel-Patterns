@@ -618,12 +618,7 @@ export const CANVAS_SIZES = {
     { label: "64 × 64", width: 64, height: 64 },
     { label: "100 × 100", width: 100, height: 100 },
   ],
-  iron_bead_hama: [
-    { label: "29 × 29", width: 29, height: 29 },
-    { label: "58 × 29", width: 58, height: 29 },
-    { label: "58 × 58", width: 58, height: 58 },
-  ],
-  iron_bead_perler: [
+  iron_bead: [
     { label: "29 × 29", width: 29, height: 29 },
     { label: "58 × 29", width: 58, height: 29 },
     { label: "58 × 58", width: 58, height: 58 },
@@ -632,7 +627,6 @@ export const CANVAS_SIZES = {
 
 export const PATTERN_TYPE_LABELS = {
   pixel_art: "Pixel Art",
-  cross_stitch: "Cross-Stitch (DMC)",
-  iron_bead_hama: "Iron Bead – Hama",
-  iron_bead_perler: "Iron Bead – Perler",
+  cross_stitch: "Cross-Stitch",
+  iron_bead: "Iron Bead",
 };

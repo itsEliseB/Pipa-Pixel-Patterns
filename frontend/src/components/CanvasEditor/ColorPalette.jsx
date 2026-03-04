@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { pixelArtPalette, PALETTE_MAP } from "../../data/palettes";
 
 function SwatchGrid({ colors, currentColor, onSelect, isBeads }) {
@@ -25,9 +26,13 @@ function SwatchGrid({ colors, currentColor, onSelect, isBeads }) {
 }
 
 export default function ColorPalette({ patternType, currentColor, onColorChange }) {
+  const [beadBrand, setBeadBrand] = useState("hama");
+
   const isPixelArt = patternType === "pixel_art";
-  const isBeads = patternType === "iron_bead_hama" || patternType === "iron_bead_perler";
-  const palette = PALETTE_MAP[patternType] || [];
+  const isBeads = patternType === "iron_bead";
+  const palette = isBeads
+    ? PALETTE_MAP[`iron_bead_${beadBrand}`]
+    : PALETTE_MAP[patternType] || [];
 
   return (
     <div className="palette-panel">
@@ -55,12 +60,33 @@ export default function ColorPalette({ patternType, currentColor, onColorChange 
           </>
         )}
 
-        {!isPixelArt && (
+        {isBeads && (
+          <>
+            <div className="palette-section-label">
+              <select
+                value={beadBrand}
+                onChange={(e) => setBeadBrand(e.target.value)}
+                className="palette-brand-select"
+              >
+                <option value="hama">Hama</option>
+                <option value="perler">Perler</option>
+              </select>
+            </div>
+            <SwatchGrid
+              colors={palette}
+              currentColor={currentColor}
+              onSelect={onColorChange}
+              isBeads={true}
+            />
+          </>
+        )}
+
+        {!isPixelArt && !isBeads && (
           <SwatchGrid
             colors={palette}
             currentColor={currentColor}
             onSelect={onColorChange}
-            isBeads={isBeads}
+            isBeads={false}
           />
         )}
       </div>

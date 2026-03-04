@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { drawCrossStitchCell } from "../utils/drawCell";
 
 const EMPTY_COLOR = "#f8f8f8";
 const PREVIEW_WIDTH = 120;
@@ -26,19 +27,7 @@ function drawCell(ctx, col, row, color, cellSize, patternType) {
       ctx.fill();
     }
   } else if (patternType === "cross_stitch") {
-    ctx.fillStyle = color || EMPTY_COLOR;
-    ctx.fillRect(x, y, cellSize, cellSize);
-    if (color) {
-      const pad = cellSize * 0.15;
-      ctx.strokeStyle = "rgba(0,0,0,0.45)";
-      ctx.lineWidth = Math.max(1, cellSize * 0.1);
-      ctx.beginPath();
-      ctx.moveTo(x + pad, y + pad);
-      ctx.lineTo(x + cellSize - pad, y + cellSize - pad);
-      ctx.moveTo(x + cellSize - pad, y + pad);
-      ctx.lineTo(x + pad, y + cellSize - pad);
-      ctx.stroke();
-    }
+    drawCrossStitchCell(ctx, x, y, color, cellSize);
   } else {
     ctx.fillStyle = color || EMPTY_COLOR;
     ctx.fillRect(x, y, cellSize, cellSize);
@@ -65,7 +54,7 @@ export default function DesignPreview({ pixels, width, height, patternType }) {
 
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
-        drawCell(ctx, col, row, pixels[row * width + col] || null, cellSize, patternType);
+        drawCell(ctx, col, row, pixels[row * width + col] ?? null, cellSize, patternType);
       }
     }
   }, [pixels, width, height, patternType, canvasHeight]);
