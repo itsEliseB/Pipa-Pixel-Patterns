@@ -5,4 +5,5 @@ __pycache__/
 .env
 dist/
 .vite/
-frontend/src/assets/css/
+EDITOR_TODOS.html
+frontend/package-lock.json
