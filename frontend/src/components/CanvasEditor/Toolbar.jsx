@@ -1,9 +1,18 @@
-import {ALL_TOOLS, TOOLS_BY_TYPE, isStitchTool} from "../../data/tools"
-import {TOOL_ICONS} from "./ToolIcons"
+import { ALL_TOOLS, TOOLS_BY_TYPE, isStitchTool } from "../../data/tools";
+import { TOOL_ICONS } from "./ToolIcons";
 
-export default function Toolbar({ activeTool, onToolChange, currentColor, onColorChange, patternType }) {
+export default function Toolbar({
+  activeTool,
+  onToolChange,
+  currentColor,
+  onColorChange,
+  patternType,
+  usedColors,
+}) {
   const isPixelArt = patternType === "pixel_art";
-  const visibleTools = TOOLS_BY_TYPE[patternType].map(id => ALL_TOOLS.find(tool => tool.id === id))
+  const visibleTools = TOOLS_BY_TYPE[patternType].map((id) =>
+    ALL_TOOLS.find((tool) => tool.id === id),
+  );
 
   return (
     <div className="toolbar">
@@ -14,7 +23,10 @@ export default function Toolbar({ activeTool, onToolChange, currentColor, onColo
           onClick={() => onToolChange(tool.id)}
           className={`tool-btn${activeTool === tool.id ? " active" : ""}`}
         >
-           {(() => { const Icon = TOOL_ICONS[tool.id]; return <Icon />; })()}  
+          {(() => {
+            const Icon = TOOL_ICONS[tool.id];
+            return <Icon />;
+          })()}
         </button>
       ))}
 
@@ -37,6 +49,27 @@ export default function Toolbar({ activeTool, onToolChange, currentColor, onColo
           className="color-picker-input"
         />
       )}
+
+      <div>
+        {usedColors?.length > 0 && (
+          <>
+            <div className="toolbar-divider" />
+            <div className="used-colors">
+              {usedColors.map((color) => (
+                <div
+                  key={color}
+                  className={`color-swatch small${
+                    color === currentColor ? " active" : ""
+                  }`}
+                  style={{ background: color }}
+                  title={color}
+                  onClick={() => onColorChange(color)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
